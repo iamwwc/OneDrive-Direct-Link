@@ -1,9 +1,9 @@
 # coding=utf-8
 import requests
-from flask import Flask, request, Response
+from flask import Flask, request, Response, send_file
 from cachetools.func import ttl_cache
 
-app = Flask(__name__)
+app = Flask(__name__,static_url_path='/')
 
 
 @ttl_cache(1024, ttl=600)
@@ -39,46 +39,7 @@ def share_ts(ch, share_token):
 
 @app.route('/')
 def index():
-    return """<html>
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<title>The OneDrive Direct Download Link Helper</title>
-<meta name="keywords" content="OneDrive,direct,download,link,OneDrive direct download"/>
-<meta name="description" content="Get OneDrive direct download link by just changing the 1drv.ms to 1drv.ws"/>
-</head>
-<body>
-<h1>The OneDrive Direct Download Link Helper</h1>
-<p>Get OneDrive direct download link by just changing the "1drv.ms" to "1drv.ws"</p>
-<h2>Usage</h2>
-1. Get the share link, like this: <a href='https://1drv.ms/u/s!Aiw77soXua44hb4CEu6eSveUl0xUoA'>https://1drv.ms/u/s!Aiw77soXua44hb4CEu6eSveUl0xUoA</a><br>
-2. Change the domain <b>1drv.ms</b> to <b>1drv.ws</b>, I mean, just flip the <b>m</b> to <b>w</b><br>
-which becomes <a href='https://1drv.ws/u/s!Aiw77soXua44hb4CEu6eSveUl0xUoA'>https://1drv.<b>w</b>s/t/s!Aiw77soXua44hb4CEu6eSveUl0xUoA</a><br>
-3. This <b>IS</b> the direct link, you can paste it to browser and see.<br>
-</p>
-<p>btw, you can add <code>?txt</code> at the end of url, to display text link, instead of a 301 redirect.<br>
-eg: <a href='https://1drv.ws/t/s!Aiw77soXua44hb4CEu6eSveUl0xUoA?txt'>https://1drv.<b>w</b>s/t/s!Aiw77soXua44hb4CEu6eSveUl0xUoA?<b>txt</b></a>
-</p>
-<hr>
-<h2>How it works</h2>
-<pre>
-https://1drv.ms/t/s!Aiw11soXua11pxigLnclZsYIU_Rx
--- HTTP --> https://onedrive.live.com/redir?resid=...&authkey=!...&ithint=file%1ctxt
---MODIFY--> https://onedrive.live.com/<em>download</em>?resid=...!1111&authkey=!...&ithint=file%1ctxt
--- HTTP --> https://jlohlg.by.files.1drv.com/some-long-long-link/file.txt?download&psid=1
-</pre>
-<hr>
-<h2>Tips</h2>
-<ul>
-    <li>Play OneDrive video directly in local player (eg:PotPlayer), most player support "play from url"</li>
-    <li>dispaly as image <img src='https://1drv.ws/u/s!Aiw77soXua44hb4CEu6eSveUl0xUoA' height="32" width="32">
-        <code>&lt;img src='https://1drv.ws/u/s!Aiw77soXua44hb4CEu6eSveUl0xUoA'&gt;</code></li>
-</ul>
-
-<hr>
-<p>More Info: <a href='https://github.com/aploium/OneDrive-Direct-Link'>GitHub OneDrive-Direct-Link</a></p>
-</body>
-</html>
-"""
+    return send_file('index.html')
 
 
 if __name__ == '__main__':

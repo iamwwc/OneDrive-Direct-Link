@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset='utf-8'>
+  <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+  <title>Page Title</title>
+  <meta name='viewport' content='width=device-width, initial-scale=1'>
+  <style>
+    body,
+    html {
+      height: 100%;
+      width: 100%;
+      margin: 0;
+      position: relative;
+    }
+
+    body {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .area {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+  </style>
+</head>
+
+<body>
+  <div>Onedrive分享链接直接下载</div>
+  <div class="area">
+    <button id="download">下载</button>
+    <button id="convert">转换</button>
+    <input id="url_input">
+  </div>
+  <div id="output"></div>
+  <script>
+    !function () {
+      const $ = document.querySelector.bind(document)
+      const download_btn = $('#download')
+      const convert_btn = $('#convert')
+      const input = $('#url_input')
+      const body = $('body')
+      const output = $('#output')
+      let inputValue = ''
+      let isEmpty = true
+      const _1drvurl = /1drv\.ms\//
+      input.addEventListener('change', event => {
+        isEmpty = false
+        inputValue = event.target.value
+        if (inputValue === '')
+          isEmpty = !isEmpty
+      })
+
+      async function getDownloadLocation() {
+        const pathidx = inputValue.indexOf('1drv.ms') + 7
+        const path = inputValue.substring(pathidx)
+        const result = await fetch(path)
+        return result.headers.get('location')
+      }
+
+      download_btn.addEventListener('click', async () => {
+        if (!_1drvurl.test(inputValue)) {
+          alert('格式不正确，开头应为 https://1drv.ms/')
+          return
+        }
+        const loc = await getDownloadLocation()
+        const adownload = document.createElement('a')
+        adownload.setAttribute('href', loc)
+        adownload.setAttribute('target', '_blank')
+        adownload.setAttribute('style', "display:none")
+        body.appendChildren(adownload)
+        adownload.click()
+        body.removeChildren(adownload)
+      })
+
+      convert_btn.addEventListener('click', async() => {
+        const loc = await getDownloadLocation()
+        output.innerHTML = loc
+      })
+
+    }()
+  </script>
+</body>
+
+</html>
